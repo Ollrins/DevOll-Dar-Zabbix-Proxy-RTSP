@@ -25,7 +25,7 @@ docker pull ollrins/zabbix-proxy-rtsp:latest
 
 ### 2. Пример простого `compose.yml`
 
-###  Создать сеть (если её ещё нет)
+###  Необходимо создать сеть (если её нет)
 
 
 ```yaml
@@ -87,7 +87,7 @@ networks:
 
 Готовый шаблон Zabbix со всеми элементами, триггерами и графиками лежит в репозитории:
 
-**➡️ [`zbx_export_templates.yaml`](https://github.com/<ВАШ_ЛОГИН>/<РЕПОЗИТОРИЙ>/blob/main/zbx_export_templates.yaml)**
+**➡️ [`zbx_export_templates.yaml`](https://github.com/Ollrins/zbx-templates/blob/main/zbx_export_templates.yaml)**
 
 
 # 📈 Мониторинг RTSP в Zabbix — Макросы, Метрики и Триггеры
