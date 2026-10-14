@@ -5,8 +5,8 @@ zabbix_export:
       name: 'Security Cameras - AllCamers'
   templates:
     - uuid: 3176d890af27425bbc37026058f6989b
-      template: RTSP_Camera_Check
-      name: RTSP_Camera_Check
+      template: RTSP_Check_Trassir
+      name: RTSP_Check_Trassir
       templates:
         - name: 'ICMP Ping'
       groups:
@@ -39,7 +39,7 @@ zabbix_export:
             key: 'check_rtsp.py[{$CAMERA_LOGIN},{$CAMERA_PWD},{HOST.CONN},{$CAMERA_PORT},{$CAMERA_PATH}]'
           triggers:
             - uuid: 6b2fc4f352244195aa1ef7c49fdb08ae
-              expression: 'last(/RTSP_Camera_Check/rtsp.avg_brightness)<5'
+              expression: 'last(/RTSP_Check_Trassir/rtsp.avg_brightness)<5'
               name: 'Чёрный экран (яркость < 5)'
               priority: WARNING
 
@@ -95,7 +95,7 @@ zabbix_export:
             key: 'check_rtsp.py[{$CAMERA_LOGIN},{$CAMERA_PWD},{HOST.CONN},{$CAMERA_PORT},{$CAMERA_PATH}]'
           triggers:
             - uuid: 6126a5e785534ae8a7c8b6b4dea37451
-              expression: 'count(/RTSP_Camera_Check/rtsp.frame_change_level,5m,"lt",1)=5'
+              expression: 'count(/RTSP_Check_Trassir/rtsp.frame_change_level,5m,"lt",1)=5'
               name: 'Изображение замёрзло (движение < 1%)'
               priority: WARNING
 
@@ -151,7 +151,7 @@ zabbix_export:
             key: 'check_rtsp.py[{$CAMERA_LOGIN},{$CAMERA_PWD},{HOST.CONN},{$CAMERA_PORT},{$CAMERA_PATH}]'
           triggers:
             - uuid: f04eddd50a8d4e74ad982f8caf14cf5e
-              expression: 'count(/RTSP_Camera_Check/rtsp.real_fps,5m,"lt",5)=5'
+              expression: 'count(/RTSP_Check_Trassir/rtsp.real_fps,5m,"lt",5)=5'
               name: 'Низкий FPS (< 5 кадров/сек)'
               priority: AVERAGE
 
@@ -174,13 +174,19 @@ zabbix_export:
             key: 'check_rtsp.py[{$CAMERA_LOGIN},{$CAMERA_PWD},{HOST.CONN},{$CAMERA_PORT},{$CAMERA_PATH}]'
           triggers:
             - uuid: 2b3c4d5e6f7a4890a2b3c4d5e6f74890
-              expression: 'last(/RTSP_Camera_Check/rtsp.status_code)=0'
+              expression: 'last(/RTSP_Check_Trassir/rtsp.status_code)=0'
               name: 'Камера недоступна'
               priority: AVERAGE
             - uuid: 3c4d5e6f7a8b4901a3c4d5e6f7a84901
-              expression: 'last(/RTSP_Camera_Check/rtsp.status_code)=2'
+              expression: 'last(/RTSP_Check_Trassir/rtsp.status_code)=2'
               name: 'Камера не выдаёт кадры'
               priority: AVERAGE
+            - uuid: e49d9a9b67d241a49e8a7ec36a6616a1
+              expression: 'last(/RTSP_Check_Trassir/rtsp.status_code)<>1 or nodata(/RTSP_Check_Trassir/rtsp.status_code,5m)=1'
+              recovery_mode: RECOVERY_EXPRESSION
+              recovery_expression: 'last(/RTSP_Check_Trassir/rtsp.status_code)=1 and nodata(/RTSP_Check_Trassir/rtsp.status_code,5m)=0'
+              name: 'Проблема с RTSP-потоком'
+              priority: DISASTER
 
         - uuid: 4d5e6f7a8b9c4912a4d5e6f7a8b94912
           name: 'RTSP Is Available'
@@ -281,19 +287,19 @@ zabbix_export:
         - color: 199C0D
           calc_fnc: ALL
           item:
-            host: RTSP_Camera_Check
+            host: RTSP_Check_Trassir
             key: rtsp.avg_brightness
         - sortorder: '1'
           color: F63100
           calc_fnc: ALL
           item:
-            host: RTSP_Camera_Check
+            host: RTSP_Check_Trassir
             key: rtsp.real_fps
         - sortorder: '2'
           color: 2774A4
           calc_fnc: ALL
           item:
-            host: RTSP_Camera_Check
+            host: RTSP_Check_Trassir
             key: rtsp.frame_change_level
 
     - uuid: 9c0d1e2f3a4b4967a9c0d1e2f3a44967
@@ -302,19 +308,19 @@ zabbix_export:
         - color: 199C0D
           calc_fnc: ALL
           item:
-            host: RTSP_Camera_Check
+            host: RTSP_Check_Trassir
             key: rtsp.status_code
         - sortorder: '1'
           color: F63100
           calc_fnc: ALL
           item:
-            host: RTSP_Camera_Check
+            host: RTSP_Check_Trassir
             key: rtsp.is_available
         - sortorder: '2'
           color: 2774A4
           calc_fnc: ALL
           item:
-            host: RTSP_Camera_Check
+            host: RTSP_Check_Trassir
             key: rtsp.latency
 
     - uuid: 0d1e2f3a4b5c4978a0d1e2f3a4b54978
@@ -323,11 +329,11 @@ zabbix_export:
         - color: 199C0D
           calc_fnc: ALL
           item:
-            host: RTSP_Camera_Check
+            host: RTSP_Check_Trassir
             key: rtsp.resolution_pixels
         - sortorder: '1'
           color: F63100
           calc_fnc: ALL
           item:
-            host: RTSP_Camera_Check
+            host: RTSP_Check_Trassir
             key: rtsp.avg_frame_size_kb
