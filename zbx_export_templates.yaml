@@ -116,6 +116,23 @@ zabbix_export:
           master_item:
             key: 'check_rtsp.py[{$CAMERA_LOGIN},{$CAMERA_PWD},{HOST.CONN},{$CAMERA_PORT},{$CAMERA_PATH}]'
 
+        - uuid: 984e334bf75a43c6bb8f4b576c83a4fd
+          name: 'RTSP Note'
+          type: DEPENDENT
+          key: rtsp.note
+          delay: '0'
+          history: 93d
+          value_type: TEXT
+          trends: '0'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.note
+              error_handler: CUSTOM_VALUE
+              error_handler_params: ''
+          master_item:
+            key: 'check_rtsp.py[{$CAMERA_LOGIN},{$CAMERA_PWD},{HOST.CONN},{$CAMERA_PORT},{$CAMERA_PATH}]'
+
         - uuid: f43e3ae0e5d0460690e687e83c086226
           name: 'RTSP FPS'
           type: DEPENDENT
@@ -156,7 +173,7 @@ zabbix_export:
           master_item:
             key: 'check_rtsp.py[{$CAMERA_LOGIN},{$CAMERA_PWD},{HOST.CONN},{$CAMERA_PORT},{$CAMERA_PATH}]'
           triggers:
-            - uuid: 2b3c4d5e6f7a4890a2b3c4d5e6f7a48901
+            - uuid: 2b3c4d5e6f7a4890a2b3c4d5e6f74890
               expression: 'last(/RTSP_Camera_Check/rtsp.status_code)=0'
               name: 'Камера недоступна'
               priority: AVERAGE
@@ -164,12 +181,6 @@ zabbix_export:
               expression: 'last(/RTSP_Camera_Check/rtsp.status_code)=2'
               name: 'Камера не выдаёт кадры'
               priority: AVERAGE
-            - uuid: 9d0e1f2a3b4c5069a9d0e1f2a3b45069
-              expression: 'last(/RTSP_Camera_Check/rtsp.status_code)<>1 or nodata(/RTSP_Camera_Check/rtsp.status_code,5m)=1'
-              recovery_mode: RECOVERY_EXPRESSION
-              recovery_expression: 'last(/RTSP_Camera_Check/rtsp.status_code)=1 and nodata(/RTSP_Camera_Check/rtsp.status_code,5m)=0'
-              name: 'Проблема с RTSP-потоком'
-              priority: DISASTER
 
         - uuid: 4d5e6f7a8b9c4912a4d5e6f7a8b94912
           name: 'RTSP Is Available'
@@ -184,23 +195,6 @@ zabbix_export:
                 - $.is_available
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
-          master_item:
-            key: 'check_rtsp.py[{$CAMERA_LOGIN},{$CAMERA_PWD},{HOST.CONN},{$CAMERA_PORT},{$CAMERA_PATH}]'
-
-        - uuid: 984e334bf75a43c6bb8f4b576c83a4fd
-          name: 'RTSP Note'
-          type: DEPENDENT
-          key: rtsp.note
-          delay: '0'
-          history: 93d
-          value_type: TEXT
-          trends: '0'
-          preprocessing:
-            - type: JSONPATH
-              parameters:
-                - $.note
-              error_handler: CUSTOM_VALUE
-              error_handler_params: ''
           master_item:
             key: 'check_rtsp.py[{$CAMERA_LOGIN},{$CAMERA_PWD},{HOST.CONN},{$CAMERA_PORT},{$CAMERA_PATH}]'
 
