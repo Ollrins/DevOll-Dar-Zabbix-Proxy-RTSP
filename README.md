@@ -106,6 +106,7 @@ networks:
 | RTSP Width               | `rtsp.width`               | DEPENDENT | Ширина кадра (px)                               |
 | RTSP Height              | `rtsp.height`              | DEPENDENT | Высота кадра (px)                               |
 | RTSP Resolution (pixels) | `rtsp.resolution_pixels`   | DEPENDENT | Разрешение в пикселях                           |
+| **RTSP Note**            | `rtsp.note`                | DEPENDENT | Диагностика: причина сбоя от скрипта            |
 
 ### 🎨 Value Mapping
 
@@ -114,6 +115,20 @@ networks:
 | `1` | Работает |
 | `2` | Нет кадров |
 | `0` | Недоступна |
+
+### 📝 Про RTSP Note
+
+Текстовое поле для диагностики. Пустое при нормальной работе. Заполняется при сбоях:
+
+| Ситуация | Значение `note` |
+|---|---|
+| Всё работает | *(пусто)* |
+| OpenCV не открыл поток | `OpenCV failed to open stream` |
+| OpenCV таймаут | `OpenCV open timed out after 5s` |
+| Захват залип | `OpenCV capture timed out after 8s` |
+| Подключился, но нет кадров | `Connected, but no valid frames` |
+| GStreamer таймаут | `GStreamer open timed out after 5s` |
+| ffprobe вытащил метаданные | `... \| Metadata via ffprobe` |
 
 ## 🚨 Триггеры
 
@@ -126,9 +141,24 @@ networks:
 | Камера не выдаёт кадры                | `last(status_code) = 2`                                              | Average   |
 | **Проблема с RTSP-потоком**           | `last(status_code) <> 1` **или** `nodata(status_code,5m) = 1`        | **Disaster** |
 
-### 🔄 Восстановление комплексного триггера
-
 Триггер **«Проблема с RTSP-потоком»** закрывается только при выполнении **обоих** условий:
+
+```text
+last(/RTSP_Camera_Check/rtsp.status_code) = 1
+and
+nodata(/RTSP_Camera_Check/rtsp.status_code,5m) = 0
+```
+
+
+## ⏱️ Таймаут скрипта
+
+| Параметр | Значение | Где задаётся |
+|---|---|---|
+| Timeout элемента `RTSP JSON Raw` | **40s** | В шаблоне (`timeout: 40s`) |
+| Типовая длительность работы | 4–8 сек | — |
+| Худший случай | ~35 сек | срабатывают все три таймаута (OpenCV, GStreamer, ffprobe) |
+| Интервал опроса | 60 сек | `delay: 60s` в шаблоне |
+
 
 
 ## 📈 Графики
