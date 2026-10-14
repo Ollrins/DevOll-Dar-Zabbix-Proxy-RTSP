@@ -196,6 +196,23 @@ zabbix_export:
           master_item:
             key: 'check_rtsp.py[{$CAMERA_LOGIN},{$CAMERA_PWD},{HOST.CONN},{$CAMERA_PORT},{$CAMERA_PATH}]'
 
+        - uuid: 984e334bf75a43c6bb8f4b576c83a4fd
+          name: 'RTSP Note'
+          type: DEPENDENT
+          key: rtsp.note
+          delay: '0'
+          history: 93d
+          value_type: TEXT
+          trends: '0'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.note
+              error_handler: CUSTOM_VALUE
+              error_handler_params: ''
+          master_item:
+            key: 'check_rtsp.py[{$CAMERA_LOGIN},{$CAMERA_PWD},{HOST.CONN},{$CAMERA_PORT},{$CAMERA_PATH}]'
+
         - uuid: 5e6f7a8b9c0d4923a5e6f7a8b9c04923
           name: 'RTSP Width'
           type: DEPENDENT
